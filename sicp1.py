@@ -215,47 +215,9 @@ def mult3(x, y):
 # print(mult2(9,9))
 # print(mult3(9,9))
 
-# Exercise 1.16
-def exp():
-    """Calc b**n using squaring; using 2**64 here."""
-    b   = 2
-    n = 64
 
-    # a   = 1
-    # print("x", x)
-    # x   = a * b**b_n
-    # y   = 0
-    a   = b**2
-    sub = 2
-    n -= 2
-
-    while True:
-        a **= 2
-        n -= sub
-        sub *= 2
-        if n==0:
-            return a
-
-        # y += 1
-        # if y>=8: break
-
-        print("a", a)
-        # print("b_n", b_n)
-
-        print("sub", sub)
-        print("a * b**n", a * b**n)
-        print()
-
-print('answer!', exp())
-def n(expr):
-    print(expr, eval(expr))
-
-if 1:
-    n("2**0 * 2**64")
-    n("2**1 * 2**63")
-    n("2**2 * 2**62")
-    n("2**4 * 2**60")
-    n("2**8 * 2**56")
+# EXERCISE 1.16
+# exp() -- moved to exp.py
 
 
 # Exercise 1.19

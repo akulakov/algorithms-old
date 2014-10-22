@@ -2,38 +2,27 @@
 
 # Exercise 1.16
 def exp(b, n):
+    """Calc b**n using only squaring operation."""
     a   = b
-    sub = 1
+    a_n = 1
     while True:
         a **= 2
-        sub *= 2
-        if (n-sub)==0:
+        a_n *= 2
+        if (n-a_n)==0:
             return a
         # if y>=8: break
 
         print("a", a)
-        print("sub", sub)
-        print("a * b ** (n-sub)", a * b**(n-sub))
-        print()
-
-def exp2(b, n):
-    a   = b
-    a_n = 1
-    while True:
-        a_n *= 2
-        if (n-a_n)==0:
-            return a**a_n
-
         print("a_n", a_n)
-        print(a**a_n * b ** (n-a_n))
+        print("a * b ** (n-a_n)", a * b**(n-a_n))
         print()
 
 # print('answer!  ', exp(5, 32), '\n')
-print('answer!  ', exp2(5, 32), '\n')
-print("2**32 =", 5**32)
+print('answer!  ', exp(5, 64), '\n')
 
 def n(expr):
-    print(expr, eval(expr))
+    print(expr, '==', eval(expr))
+n("5**64")
 
 if 0:
     n("2**0 * 2**64")
