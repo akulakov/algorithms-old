@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
+import operator
 
 def binp(x):
+    """Print out `x` in binary format."""
     print("{:3} {:08b}".format(x, x))
 
 def bitwise_and(a, b):
@@ -20,30 +22,25 @@ a, b = 101, 115
 # binp(bitwise_and(a, b))
 print()
 
-# for x in range(16): binp(x)
-# for x in (8,3,5): binp(x)
-#bitwise_and(127,127)
-
 sentinel = object()
 def fold(l, op, init_val=sentinel):
+    """Generic fold operation."""
     if not l:
         return init_val
     if init_val is not sentinel:
         return op(init_val, fold(l, op))
     elif l[1:]:
-        # first, *rest = l
+        first, *rest = l
         return op(first, fold(rest, op))
     else:
         return l[0]
 
-import operator
-def append(a, b):
-    return [a,b]
-# print(fold([None,None], append, None))
+# print(fold([None,None], lambda a,b: [a,b], None))
 # print(fold([1], operator.add, 2))
 # print(fold([1,2], operator.add, 2))
 
 def last(l):
+    """Recursive - get last item in a sequence."""
     if l[1:]:
         return last(l[1:])
     else:
@@ -51,6 +48,7 @@ def last(l):
 # print(last([1,3,5,8]))
 
 def A(x, y):
+    """Ackerman's function."""
     # print("x,y", x, y)
     if not y: return 0
     if not x: return y*2
@@ -60,10 +58,10 @@ def A(x, y):
         return A(x-1, y)
 
 def f(n): return A(2,n)
-
 # for n in range(5): print(n, f(n))
 
 def fib(a, b, count):
+    """Fibonacci sequence."""
     if count:
         return fib(a+b, a, count-1)
     else:
@@ -73,6 +71,7 @@ def fib(a, b, count):
 
 
 # ---- BITFUNC ----------------------------------------------------------------------------------
+# p0 exercise
 def bitfunc(x):
     return x**4 - 5 * x**2 + 4
 
@@ -115,6 +114,7 @@ def first_denom(n):
 l = [[],[],[]]
 
 def count_change(amount, kinds_of_coins, d=0):
+    """Count change algorithm from SICP book."""
     star = '*' if amount==0 else ' '
     if kinds_of_coins:
         l[d].append("%s %d] amount, kinds_of_coins %s %s" % (star, d, amount,kinds_of_coins))
@@ -134,6 +134,7 @@ def count_change(amount, kinds_of_coins, d=0):
 # print()
 # for m in l[2]: print(m)
 
+# Exercise 1.11 (page 70)
 def f_rec(n):
     if n<3:
         return n
@@ -153,8 +154,10 @@ def f_iter(n):
 
 # print(f_rec(10))
 # print(f_iter(10))
+# END Exercise 1.11 (page 70)
 
 def p_triangle(l, n):
+    """Pascal's triangle."""
     if n==0 or n==l:
         return 1
     return p_triangle(l-1, n-1) + p_triangle(l-1, n)
@@ -163,6 +166,7 @@ def p_triangle(l, n):
 # print(p_triangle(4, 2))
 # print(p_triangle(4, 3))
 
+# Exercise 1.15
 def cube(x):
     return x**3
 
@@ -171,18 +175,23 @@ def p(x):
     return 3*x - 4*cube(x)
 
 def sine(angle):
+    """Exercise 1.15"""
     if abs(angle) <= 0.1:
         return angle
     else:
         return p(sine(angle / 3))
+# END Exercise 1.15
 
 def multiply(a, b):
+    """Multiply a and b recursively using addition."""
     if b==0: return 0
     else:
         return a + multiply(a, b-1)
 
 def mult2(x, y):
-    """aka 'Russian peasant method'; allowed: addition, halving, doubling."""
+    """ Multiply with doubling / halving,
+        aka 'Russian peasant method'; allowed: addition, halving, doubling.
+    """
     if y==1:
         return x
     else:
@@ -190,6 +199,7 @@ def mult2(x, y):
         return mult2(x*2, y//2) + add
 
 def mult3(x, y):
+    """Same as `mult2` but iterative."""
     answer = 0
     while True:
         if y % 2:
@@ -205,35 +215,9 @@ def mult3(x, y):
 # print(mult2(9,9))
 # print(mult3(9,9))
 
-def exp(b, n, a=1):
-    print("b,n,a", b,n,a)
-    if n<2:
-        return a
-    else:
-        a = a * b**2
-        if n%2:
-            n-=1
-            a += a*b**2
-        return exp(b, n**0.5, a)
-
-def exp2(b, n, a=1):
-    if a==1:
-        a = b
-    while True:
-        if n==1:
-            # a += b
-            return a
-        if n==0:
-            return a
-        print("a", a)
-        print("n", n)
-        print()
-        n //= 2
-        a = a**2
-        # a += add
-
-from math import sqrt
-def t():
+# Exercise 1.16
+def exp():
+    """Calc b**n using squaring; using 2**64 here."""
     b   = 2
     n = 64
 
@@ -262,7 +246,7 @@ def t():
         print("a * b**n", a * b**n)
         print()
 
-print('answer!', t())
+print('answer!', exp())
 def n(expr):
     print(expr, eval(expr))
 
@@ -273,31 +257,10 @@ if 1:
     n("2**4 * 2**60")
     n("2**8 * 2**56")
 
-print("sqrt(2**62)", sqrt(2**62))
-print("2**60", 2**60)
-n("2**31 == sqrt(2**62)")
 
-def t2():
-    a = 2
-    for x in range(6):
-        a **= 2
-        print("a", a)
-    print()
-
-    for x in (2,4,8,16,32,64):
-        print(2**x)
-
-    while True:
-        print("a", a)
-        a **= 1/2
-        if a == 2: break
-
-# print(exp2(2,6))
-# t()
-print()
-# t2()
-
+# Exercise 1.19
 def fib2(n):
+    """Fibonacci 2"""
     a,b = 0,1
     lst = [a,b]
     for _ in range(n-2):
@@ -309,6 +272,7 @@ def fib2(n):
     return lst
 
 def fib3(p, q, a, b, n):
+    """More general version of Fibonacci with p & q variables."""
     lst = [a, b]
     for _ in range(n-2):
         old_a = a
@@ -329,15 +293,19 @@ def f_twice():
     print(fib3(1,4,0,1,4))
 
 # f_twice()
+# END Exercise 1.19
 
 def gcd(a, b):
-    """With applicative order, modulus is used 6 times, with normal evaluation 7? or also 6??"""
+    """ Calc greatest common divisor.
+        With applicative order, modulus is used 6 times, with normal evaluation 7? or also 6????
+        Trick question?
+        Exercise 1.20
+    """
     # substitution: gcd(206, gcd(40, gcd(6, gcd(4, gcd(2, 0)))))
     print("a,b", a,b)
     if not b:
         return a
     else:
         return gcd(b, a % b)
-
 
 # print(gcd(206, 40))
