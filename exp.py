@@ -4,7 +4,7 @@
 def exp(b, n):
     a   = b
     sub = 1
-    for _ in range(n):
+    while True:
         a **= 2
         sub *= 2
         if (n-sub)==0:
@@ -19,7 +19,7 @@ def exp(b, n):
 def exp2(b, n):
     a   = b
     a_n = 1
-    for _ in range(n):
+    while True:
         a_n *= 2
         if (n-a_n)==0:
             return a**a_n
@@ -28,8 +28,9 @@ def exp2(b, n):
         print(a**a_n * b ** (n-a_n))
         print()
 
+# print('answer!  ', exp(5, 32), '\n')
 print('answer!  ', exp2(5, 32), '\n')
-print("2**32", 5**32)
+print("2**32 =", 5**32)
 
 def n(expr):
     print(expr, eval(expr))
