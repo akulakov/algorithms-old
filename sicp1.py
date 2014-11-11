@@ -57,6 +57,7 @@ def A(x, y):
         y = A(x, y-1)
         return A(x-1, y)
 
+# print(A(4,2))
 def f(n): return A(2,n)
 # for n in range(5): print(n, f(n))
 
@@ -247,12 +248,15 @@ print('-'*70)
 # print(fib2(12))
 def f_twice():
     a, b = 0, 1
-    p, q = 1, 2
-    a, b = fib3(p, q, a, b, 4)
-    print("a,b", a,b)
-    print(fib3(p, q, a, b, 4))
+    p, q = 0, 1
+    a, b = fib3(10, 20, 0, 1, 4)
 
-    print(fib3(1,4,0,1,4))
+    print(fib2(4))
+    print("a,b", a,b)
+    # a, b = fib3(p, q, a, b, 4)
+    # print(fib3(p, q, a, b, 4))
+
+    # print(fib3(1,4,0,1,4))
 
 # f_twice()
 # END Exercise 1.19
@@ -264,10 +268,121 @@ def gcd(a, b):
         Exercise 1.20
     """
     # substitution: gcd(206, gcd(40, gcd(6, gcd(4, gcd(2, 0)))))
-    print("a,b", a,b)
+    # print("a,b", a,b)
     if not b:
         return a
     else:
         return gcd(b, a % b)
 
 # print(gcd(206, 40))
+
+def prime(x):
+    for a in range(2, x):
+        if a**2 > x:
+            return True
+        elif (x % a) == 0:
+            # print("a", a)
+            return False
+    return True
+
+import itertools
+def smallest_divisor(x):
+    for a in range(2, x):
+    # for a in itertools.chain( [2], range(3, x, 2) ):
+        if a**2 > x:
+            return x
+        elif (x % a) == 0:
+            # print("a", a)
+            return a
+
+def t1():
+    smallest_divisor(1999)
+
+# for x in (199,1999,19999):
+    # print(smallest_divisor(x))
+
+for x in range(2, 100):
+    if prime(x):
+        pass
+        # print(x)
+
+# print("prime(199)", prime(199))
+# print("prime(1999)", prime(1999))
+# print("prime(19999)", prime(19999))
+
+def inc(x):
+    return x+1
+
+def cubic(a, b, c):
+    """1.40"""
+    def inner(x):
+        return x**3 + a*x**2 + b*x + c
+    return inner
+
+def double(f):
+    """1.41: Apply `f` two times."""
+    def inner(x):
+        return f(f(x))
+    return inner
+
+from functools import reduce
+def compose(*functions):
+    """1.42"""
+    def inner(x):
+        # shorter but less readable alternative
+        # return reduce(lambda x, y: y(x), reversed(functions), x)
+        for f in reversed(functions):
+            x = f(x)
+        return x
+    return inner
+
+def repeated(f, n):
+    """1.43: Repeatedly apply `f` function `n` times."""
+    return compose(*[f]*n)
+
+def square(x):
+    return x**2
+
+def smooth(f, dx=1):
+    """1.44"""
+    def inner(x):
+        return (f(x-dx) + f(x) + f(x+dx)) / 3
+    return inner
+
+def avg(a, b):
+    return (a+b) / 2
+
+def avg_damp(f):
+    def inner(x):
+        return avg(x, f(x))
+    return inner
+
+def over1k(x): return x > 1000
+def dbl(x): return x*2
+
+def iter_improve(good_enough, improve):
+    """1.46"""
+    def inner(x):
+        while not good_enough(x):
+            x = improve(x)
+        return x
+    return inner
+
+
+print(avg(5,87))
+print(avg_damp(square)(5))
+####### 1.4x
+dbl_inc = double(double(double(inc)))
+sqr_inc = compose(square, inc)
+sqr_5 = repeated(square, 5)
+# print("sqr_5(2)", sqr_5(2))
+# print(repeated(square, 2)(5))
+# print("dbl_inc(5)", dbl_inc(5))
+# print("sqr_inc(5)", sqr_inc(5))
+# print("smooth(square, 1)(25)", smooth(square, 1)(25))
+x = repeated(smooth, 5)(square)(25)
+# print("x", x)
+
+f = iter_improve(over1k, dbl)
+x = f(2)
+print("x", x)
