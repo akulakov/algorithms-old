@@ -57,7 +57,7 @@ def A(x, y):
         y = A(x, y-1)
         return A(x-1, y)
 
-# print(A(4,2))
+# print("ackermann", A(4,3))
 def f(n): return A(2,n)
 # for n in range(5): print(n, f(n))
 
@@ -129,8 +129,8 @@ def count_change(amount, kinds_of_coins, d=0):
         return count_change(amount, kinds_of_coins-1, 1) + \
                count_change(amount2, kinds_of_coins, 2)
 
-# print(count_change(11, 3))
-# print(count_change(100, 5))
+# print("CC", count_change(10, 2))
+print(count_change(300, 5))
 # for m in l[1]: print(m)
 # print()
 # for m in l[2]: print(m)
@@ -156,6 +156,8 @@ def f_iter(n):
 # print(f_rec(10))
 # print(f_iter(10))
 # END Exercise 1.11 (page 70)
+
+
 
 def p_triangle(l, n):
     """Pascal's triangle."""
@@ -310,6 +312,8 @@ for x in range(2, 100):
 # print("prime(1999)", prime(1999))
 # print("prime(19999)", prime(19999))
 
+### 1.4x
+
 def inc(x):
     return x+1
 
@@ -368,6 +372,15 @@ def iter_improve(good_enough, improve):
         return x
     return inner
 
+### 2.x
+
+def make_rat(a, b):
+    """2.1"""
+    sign = (a<0 and b<0) or (a>=0 and b>=0)
+    sign = '' if sign else '-'
+    x = gcd(a, b)
+    return "%s%d/%d" % (sign, abs(a/x), abs(b/x))
+
 
 print(avg(5,87))
 print(avg_damp(square)(5))
@@ -386,3 +399,6 @@ x = repeated(smooth, 5)(square)(25)
 f = iter_improve(over1k, dbl)
 x = f(2)
 print("x", x)
+
+a = make_rat(3, 9)
+print("a", a)
