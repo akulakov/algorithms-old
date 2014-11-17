@@ -71,3 +71,50 @@
 )
 (test-true "test that better-pi gives a closer approx. to pi,  then approx-pi "
           ( < (abs (- PI (better-pi 600))) (abs (- PI (approx-pi 600)))))
+
+;###################
+;Problem 5
+;###################
+(define (deriv-constant constant wrt)
+0)
+
+(define (deriv-variable var wrt)
+  (if (eq? var wrt) 1 0)
+)
+
+(test-eq? "test for derivation using same var. " (deriv-variable 'x 'x) 1)
+(test-eq? "test for derivation using different var. " (deriv-variable 'x 'y) 0)
+
+;###################
+;Problem 6
+;###################
+(define (derivative expr wrt)
+
+(cond
+[(not (symbol? wrt)) (error "Don't know how to differentiate" expr)]
+[else ( cond
+         [(and (list? expr) (equal? (list-ref expr 0) '+)) (deriv-sum expr wrt)]
+         [(symbol? expr) (deriv-variable expr wrt)]
+         [(number? expr) (deriv-constant expr wrt)]
+         [else (error "Don't know how to differentiate" expr)])]))
+
+
+;###################
+;Problem 7
+;##################
+(define (deriv-sum expr wrt)
+  (quasiquote (+ (unquote (derivative (list-ref expr 1) wrt)) (unquote (derivative (list-ref expr 2) wrt)))))
+
+(test-equal? "test for sum derivation" (deriv-sum '(+ x 2) 'x) '(+ 1 0))
+(test-equal? "test for sum derivation" (derivative '(+ x 2) 'x) '(+ 1 0))
+
+;###################
+;Problem 8
+;###################
+(define (deriv-product expr wrt)
+(quasiquote (+ (* (unquote(list-ref expr 1)) (unquote (derivative (list-ref expr 2) wrt)))
+                  ( * (unquote (derivative (list-ref expr 1) wrt)) (unquote(list-ref expr 2))))))
+
+(test-true "test for product derivation" (or (equal? (deriv-product '(* x 3) 'x) '(+ (* x 0) (* 1 3)))
+                                             (equal? (eval (deriv-product '(* x 3) 'x)) 3)))
+
