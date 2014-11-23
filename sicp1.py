@@ -130,7 +130,7 @@ def count_change(amount, kinds_of_coins, d=0):
                count_change(amount2, kinds_of_coins, 2)
 
 # print("CC", count_change(10, 2))
-print(count_change(300, 5))
+# print(count_change(300, 5))
 # for m in l[1]: print(m)
 # print()
 # for m in l[2]: print(m)
@@ -382,8 +382,107 @@ def make_rat(a, b):
     return "%s%d/%d" % (sign, abs(a/x), abs(b/x))
 
 
-print(avg(5,87))
-print(avg_damp(square)(5))
+class Rect:
+    """#2.3"""
+    def __init__(self, p1, p2):
+        # upper left, lower right
+        self.points = p1, p2
+
+    @property
+    def sides(self):
+        p1, p2 = self.points
+        return p2[0]-p1[0], p2[1]-p1[1]
+
+    def perim(self):
+        return self.sides[0]*2 + self.sides[1]*2
+
+    def area(self):
+        return self.sides[0] * self.sides[1]
+
+def cons(x, y):
+    """#2.4"""
+    return lambda f: f(x, y)
+def car(z):
+    return z(lambda p,q: p)
+def cdr(z):
+    return z(lambda p,q: q)
+
+class A:
+    def attr_a(self, arg=sentinel):
+        """Get or set attr."""
+        if arg==sentinel:
+            return self.a
+        else:
+            self.a = arg
+
+class Interval:
+    def __init__(self, a, b):
+        self.a, self.b = a, b   # lower and upper bounds
+
+    def __repr__(self):
+        return "%.2f-%.2f" % (self.a, self.b)
+
+    def __add__(self, i):
+        return Interval(self.a+i.a, self.b+i.b)
+
+    def __sub__(self, i):
+        """#2.8"""
+        return Interval(self.a-i.a, self.b-i.b)
+
+    def __mul__(self, i):
+        s = self
+        tup = s.a*i.a, s.a*i.b, s.b*i.a, s.b*i.b
+        return Interval(min(tup), max(tup))
+
+    def __truediv__(self, i):
+        if not i.b or not i.a:
+            raise ZeroDivisionError("Cannot divide be a zero-bound interval")
+        return self * Interval(1/i.b, 1/i.a)
+
+    @property
+    def width(self):
+        return (self.b-self.a) / 2
+
+from itertools import product
+from operator import mul
+
+# #2.9
+# let x and y be intervals, z = x+y; a and b are lower and upper bounds
+# x.width = (x.b - x.a) / 2
+# z.width = (x.b+y.b - x.a+y.a) / 2
+
+def f(a,b,c,d):
+    i1, i2 = Interval(a,b), Interval(c,d)
+    print("i1,i2", i1,i2)
+    print("i1.width", i1.width)
+    print("i2.width", i2.width)
+    print("i1+i2", i1+i2)
+    print("i1+i2.width", (i1+i2).width)
+    # print("i1*i2", i1*i2)
+f(1,2,3,6)
+
+# print("i1/i2", i1/i2)
+
+# 81 = 2**a * 3**b
+# 4 * 9
+# 8 * 27
+
+# 81 = 2*2*2 * 3*3*3*3*3
+# x = 2*a + 3*b
+#
+
+# 2**a = x / 3**b
+# a = log(x / 3**b, 2)
+# b = log(x / 2**a, 3)
+# 2**3 = 8
+
+pair = cons(5,10)
+# print("car", car(pair))
+# print("cdr", cdr(pair))
+
+
+# print(avg(5,87))
+# print(avg_damp(square)(5))
 ####### 1.4x
 dbl_inc = double(double(double(inc)))
 sqr_inc = compose(square, inc)
@@ -398,7 +497,7 @@ x = repeated(smooth, 5)(square)(25)
 
 f = iter_improve(over1k, dbl)
 x = f(2)
-print("x", x)
+# print("x", x)
 
 a = make_rat(3, 9)
-print("a", a)
+# print("a", a)
