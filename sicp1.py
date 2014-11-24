@@ -416,8 +416,15 @@ class A:
             self.a = arg
 
 class Interval:
-    def __init__(self, a, b):
+    def __init__(self, a=None, b=None):
         self.a, self.b = a, b   # lower and upper bounds
+
+    def _init_center_width(self, c, w):
+        self.a, self.b = c-w, c+w
+
+    def _init_center_width_perc(self, c, perc):
+        perc /= 100
+        self.a, self.b = c-c*perc, c+c*perc
 
     def __repr__(self):
         return "%.2f-%.2f" % (self.a, self.b)
@@ -439,6 +446,19 @@ class Interval:
             raise ZeroDivisionError("Cannot divide be a zero-bound interval")
         return self * Interval(1/i.b, 1/i.a)
 
+    def __rtruediv__(self, o):
+        return Interval(o/self.a, o/self.b)
+
+    @property
+    def percent(self):
+        # 2.12
+        return 100 * self.width / self.center
+
+    @property
+    def center(self):
+        # 2.12
+        return self.a + self.width
+
     @property
     def width(self):
         return (self.b-self.a) / 2
@@ -453,13 +473,15 @@ from operator import mul
 
 def f(a,b,c,d):
     i1, i2 = Interval(a,b), Interval(c,d)
+    print("1/i1", 1/i1)
     print("i1,i2", i1,i2)
-    print("i1.width", i1.width)
-    print("i2.width", i2.width)
-    print("i1+i2", i1+i2)
-    print("i1+i2.width", (i1+i2).width)
+    print("i1.percent", i1.percent)
+    print("i2.percent", i2.percent)
+    print("(i1*i2).percent", (i1*i2).percent)
     # print("i1*i2", i1*i2)
-f(1,2,3,6)
+    print("(i1*i2)/(i1+i2)", (i1*i2)/(i1+i2))
+    print("2nd: ", 1/(1/i1 + 1/i2))
+f(5,6,7,8)
 
 # print("i1/i2", i1/i2)
 
@@ -501,3 +523,8 @@ x = f(2)
 
 a = make_rat(3, 9)
 # print("a", a)
+
+i = Interval()
+i._init_center_width_perc(10, 50)
+print("i", i)
+print("i.percent", i.percent)
