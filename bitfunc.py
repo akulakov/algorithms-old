@@ -77,6 +77,8 @@ def fold(l, op, init_val=sentinel):
     else:
         return l[0]
 
+# print(fold([2,3,4], operator.mul))
+
 def to_num(a, default=None):
     try:
         return float(a)
@@ -135,8 +137,8 @@ def test():
 
 # p1.7
 x = 5
-print("P1.7  + x 3 =", Deriv('x').deriv("+ x 3 6 x 7 x"))
-print("P1.7  * x 2 =", Deriv('x').deriv("* x x 3"))
+# print("P1.7  + x 3 =", Deriv('x').deriv("+ x 3 6 x 7 x"))
+print("P1.7  * x 2 =", Deriv('x').deriv("* x 1"))
 test()
 
 # print(bitfunc_recur(11, 5, 10))
