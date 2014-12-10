@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import operator
+p = print
 
 def binp(x):
     """Print out `x` in binary format."""
@@ -109,13 +110,17 @@ def compare(*args):
 # print(compare(998, 5, 10))
 
 # ---- COUNT CHANGE -----------------------------------------------------------------------------
-def first_denom(n):
-    return {1:1, 2:5, 3:10, 4:25, 5:50}[n]
 
 l = [[],[],[]]
 
-def count_change(amount, kinds_of_coins, d=0):
-    """Count change algorithm from SICP book."""
+def count_change(amount, coin_list, kinds_of_coins=None, d=0):
+    """2.19: Count change algorithm."""
+    # 2.19 answer: order of coin_list does not affect answer
+    def first_denom(n):
+        return {m+1:c for m,c in enumerate(coin_list)}[n]
+    if kinds_of_coins is None:
+        kinds_of_coins = len(coin_list)
+
     star = '*' if amount==0 else ' '
     if kinds_of_coins:
         l[d].append("%s %d] amount, kinds_of_coins %s %s" % (star, d, amount,kinds_of_coins))
@@ -126,10 +131,10 @@ def count_change(amount, kinds_of_coins, d=0):
     else:
         amount2 = amount - first_denom(kinds_of_coins)
         # print("amount2", amount2)
-        return count_change(amount, kinds_of_coins-1, 1) + \
-               count_change(amount2, kinds_of_coins, 2)
+        return count_change(amount, coin_list, kinds_of_coins-1, 1) + \
+               count_change(amount2, coin_list, kinds_of_coins, 2)
 
-# print("CC", count_change(10, 2))
+print("CC", count_change(100, [5,1,50,25,10]))
 # print(count_change(300, 5))
 # for m in l[1]: print(m)
 # print()
@@ -173,8 +178,8 @@ def p_triangle(l, n):
 def cube(x):
     return x**3
 
-def p(x):
-    print("in p()")
+def p2(x):
+    print("in p2()")
     return 3*x - 4*cube(x)
 
 def sine(angle):
@@ -407,6 +412,13 @@ def car(z):
 def cdr(z):
     return z(lambda p,q: q)
 
+def car(lst):
+    return lst[0]
+def cdr(lst):
+    return lst[1:]
+def cons(a, b):
+    return a, b
+
 class A:
     def attr_a(self, arg=sentinel):
         """Get or set attr."""
@@ -481,29 +493,72 @@ def f(a,b,c,d):
     # print("i1*i2", i1*i2)
     print("(i1*i2)/(i1+i2)", (i1*i2)/(i1+i2))
     print("2nd: ", 1/(1/i1 + 1/i2))
-f(5,6,7,8)
+# f(5,6,7,8)
+
+def append(a, b):
+    if not a:
+        return b
+    else:
+        first, rest = a
+        return cons(first, append(rest, b))
+
+def lisplist(lst):
+    if lst:
+        a, *b = lst
+    else:
+        return None
+    return [a, lisplist(b)]
+
+def last_pair(lst):
+    # 2.17
+    if lst[1] is None:
+        return lst
+    else:
+        return last_pair(lst[1])
+
+def same_parity(*args):
+    # 2.20
+    assert args
+    return [a for a in args if a%2 == args[0]%2]
+
+def lispmap(func, lists):
+    # page 146, lisp style map!
+    return (func(x) for x in zip(*lists))
+
+#   (define (square-list items)
+# (define (iter things answer)
+#   (if (null? things)
+#       answer
+#       (iter (cdr things)
+#             (cons (square (car things))
+# (iter items nil))
+# answer))))
+
+def square_list(items):
+    def iter(things, answer):
+        if not things:
+            return answer
+        else:
+            c = cons(square(car(things)), answer)
+            print("c", c)
+            return iter(cdr(things), c)
+    return iter(items, None)
+
+print(square_list([3,5,8,9,10]))
+
+# p(same_parity(1,3,5,7,8,9,10))
+
+# p(lisplist(range(10)))
+# p(last_pair(lisplist(range(10))))
+# print(append(lisplist([1,2,3]), lisplist([11,12,15])))
 
 # print("i1/i2", i1/i2)
-
-# 81 = 2**a * 3**b
-# 4 * 9
-# 8 * 27
-
-# 81 = 2*2*2 * 3*3*3*3*3
-# x = 2*a + 3*b
-#
-
-# 2**a = x / 3**b
-# a = log(x / 3**b, 2)
-# b = log(x / 2**a, 3)
-# 2**3 = 8
 
 pair = cons(5,10)
 # print("car", car(pair))
 # print("cdr", cdr(pair))
 
 
-# print(avg(5,87))
 # print(avg_damp(square)(5))
 ####### 1.4x
 dbl_inc = double(double(double(inc)))
@@ -526,5 +581,5 @@ a = make_rat(3, 9)
 
 i = Interval()
 i._init_center_width_perc(10, 50)
-print("i", i)
-print("i.percent", i.percent)
+# print("i", i)
+# print("i.percent", i.percent)

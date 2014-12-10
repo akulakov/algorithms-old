@@ -10,6 +10,7 @@ def all_same(seq):
 
 
 class Card:
+    """Note: can be implemented as a named tuple.."""
     def __init__(self, card):
         self.card, self.suit = card
         d         = dict(T=10, J=11,Q=12,K=13,A=14)
