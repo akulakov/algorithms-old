@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 import sys
-import heapq
 import queue
 from collections import Counter
 
