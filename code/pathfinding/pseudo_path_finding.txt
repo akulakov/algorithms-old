@@ -1,0 +1,46 @@
+
+Note: using 'distance' as heuristic function
+Note 2: Queue should be first-in, first-out to make breadth-first mode work.
+Note 3: In this example, 'tile' (as in a grid) is used instead of node but this logic will work with any type
+        of nodes
+Note 4: priority is calculated from cost of movement and/or from distance, so lower values are 'best' and are
+        selected first
+
+FrontierQueue
+    "Queue that allows to add / get tiles"
+    add():
+        add tile to came-from tree
+        add tile @ priority to QUEUE
+
+    get():
+        return tile @ lowest (best) priority
+
+    make-path():
+        "Use after goal is found"
+        return path based on came-from tree
+
+calc-priority():
+    IF breadth-first     : 1
+    IF dijkstra          : new-cost
+    IF greedy-best-first : distance
+    IF a-star            : new-cost + distance
+
+is-quicker-path():
+    TRUE IF new-cost LESS THAN visited-cost
+
+unvisited-neighbors():
+    for each neighbor as current:
+        new-cost := cost-so-far[previous] + calc-cost(previous => current)
+        if unvisited OR is-quicker-path():
+            cost-so-far[current] = new-cost
+            yield current @ calc-priority()
+
+find-path():
+    arguments: start tile, goal tile
+    cost-so-far := {start: 0}
+    frontier := init FrontierQueue(start)  - create frontier with a single starting node
+
+    while current tile = frontier.get():
+        if goal is reached, return frontier
+        frontier.add( unvisited-neighbors() )
+        return frontier.make-path()

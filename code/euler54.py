@@ -14,7 +14,7 @@ class Card:
     def __init__(self, card):
         self.card, self.suit = card
         d         = dict(T=10, J=11,Q=12,K=13,A=14)
-        self.val  = d.get(card) or int(card)
+        self.val  = d.get(self.card) or int(self.card)
 
     def __repr__(self):
         return self.card + self.suit
