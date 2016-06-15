@@ -1,0 +1,29 @@
+make-tree(items):
+    while items:
+        i1, i2 = items.heappop(2)
+        node := Node(i1.freq + i2.freq)
+        tree[node] = i1,i2
+        items.heappush(node)
+
+make-code(node, code):
+    if internal node:
+        left, right = tree[node]
+        make-code(left, code + '0')
+        make-code(right, code + '1')
+    else:
+        codes[node] = code
+
+print-tree(node, indent):
+    print indent + node + codes[node] or ''
+    if internal node:
+        left, right = tree[node]
+        print-tree(left, indent+8)
+        print-tree(right, indent+8)
+
+decode(stream):
+    for char in stream:
+        current-code += char
+        if current-code in codes:
+            print codes[current-code]
+            current-code = ''
+

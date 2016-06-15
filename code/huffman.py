@@ -2,12 +2,7 @@
 import sys
 import heapq
 import json
-from collections import defaultdict, Counter
-
-# email Andrei andrei.avk@gmail.com
-
-# def tree():
-#     return defaultdict(tree)
+from collections import Counter
 
 # AK implementation
 

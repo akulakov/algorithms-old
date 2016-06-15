@@ -70,13 +70,22 @@ class Dict:
         return x
 
     def __setitem__(self, name, val):
-        i = self.hash(name) % self.size
-        c=0
-        for i in chain(range(i, self.size-1), range(i)):
+        """ Set key `name` to value `val`.
+
+            Open addressing scheme; works in reverse direction in order to avoid perf. degradation
+            with common case of sequential keys going in forward direction; still has degradation
+            with sequential keys going back or unordered. (therefore don't use this code in production).
+        """
+        i = end = self.hash(name) % self.size
+        c = 0
+        while True:
             if self.table[i] is None:
                 break
             self.collisions+=1
-            c+=1
+            c += 1
+            i = (i-1) % self.size
+            if i == end:
+                break
 
         self.longest_collision = max(self.longest_collision, c)
         self.table[i] = self.hash(name), name, val
@@ -99,10 +108,12 @@ class Dict:
     def __getitem__(self, name):
         hashed_name = self.hash(name)
         i = self.hash(name) % self.size
-        for i in chain(range(i, self.size-1), range(i)):
+        end = i + 1
+        while i != end:
+        # for i in chain(range(i, self.size-1), range(i)):
             if self.table[i][0] == hashed_name and self.table[i][1] == name:
                 return self.table[i][2]
-
+            i = (i-1) % self.size
 
 d = Dict()
 d.info()
@@ -114,7 +125,7 @@ for w in words:
     d[w] = w, len(w)
 for i in range(5,100,10):
     w=words[i]
-    # print(w, d[w])
+    print(w, d[w])
 # print('b', d['b'])
 d.info()
 
