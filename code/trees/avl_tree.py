@@ -16,9 +16,9 @@ def n_rand(n):
 class Node:
     "Node has height attribute and calculates balance based on heights of children."
     def __init__(self, val, parent=None):
-        self.val=val
-        self.left=self.right=self.parent=None
-        self.height=1
+        self.val = val
+        self.left = self.right = self.parent = None
+        self.height = 1
 
     @property
     def balance(self):
@@ -36,10 +36,13 @@ class Tree:
         self.root = Node(val)
 
     def display(self, node=None, depth=0):
+        "Return string to display; right children on top, left children on the bottom."
+        if self.root is None:
+            return None
         node = node or self.root
-        global x
-        x+=1
-        if x>50:return
+        # global x
+        # x+=1
+        # if x>50:return
         ret = ""
         if node.right is not None:
             ret += self.display(node.right, depth + 1)
@@ -48,115 +51,103 @@ class Tree:
             ret += self.display(node.left, depth + 1)
         return ret + '\n'
 
+    def remove(self, val):
+        return self.find(val, delete=True)
+
     def find(self, val, node=None, path=None, delete=False):
+        "Find `val` under `node`, optionally delete if `delete` is True."
+        if not self.root:
+            return None
         node = node or self.root
         path = path or []
-        path.append(node)
         if val==node.val:
             if delete:
-                self.delete_node(node, path[:-1])
+                self.delete_node(node, path)
             return True
-        elif val>node.val:
-            if not node.right:
+        else:
+            next = node.right if val>node.val else node.left
+            if not next:
                 return None
-            return self.find(val, node.right, path, delete)
-        elif val<node.val:
-            if not node.left:
-                return None
-            return self.find(val, node.left, path, delete)
+            return self.find(val, next, path+[node], delete)
 
-    def update_link(self, parent, node, new):
-        if parent:
-            if parent.right==node: parent.right=new
-            if parent.left==node: parent.left=new
+    def replace_node(self, parent, a, b):
+        """ Replace old `node` with `new` node, updating parent's link.
+            if node is root, update root link instead.
+        """
+        if a==self.root:
+            self.root = b
+        else:
+            if parent.right==a: parent.right = b
+            if parent.left==a: parent.left = b
 
     def delete_node(self, node, path):
-        is_root = node==self.root
-        parent = path[-1] if path else None
-        print('deleting', node, 'parent', parent)
-        if not (node.right or node.left):
-            if is_root:
-                self.root = None
-            else:
-                self.update_link(parent, node, None)
+        """Delete `node`."""
+        parent = getitem(path, -1)
+        if not any([node.right, node.left]):
+            self.replace_node(parent, node, None)
+            self.rebalance(path)
 
         elif node.right and node.left:
-            new=node.right
-            path2=[node]    # we may need new's parent
+            new = node.right
+            # path2 = [node]
+            path.append(node)
             while new.left:
-                path2.append(new)
-                new=new.left
-            self.delete_node(new, path2)
-            if is_root:
-                self.root=new
-            else:
-                self.update_link(parent, node, new)
+                path.append(new)
+                new = new.left
+            self.delete_node(new, path)
+            self.replace_node(parent, node, new)
             new.right, new.left = node.right, node.left
-
-        elif node.right:
-            if is_root:
-                self.root = node.right
-            else:
-                self.update_link(parent, node, node.right)
-        elif node.left:
-            if is_root:
-                self.root = node.left
-            else:
-                self.update_link(parent, node, node.left)
-
+        else:
+            self.replace_node(parent, node, node.right or node.left)
+            self.rebalance(path)
 
     def add(self, val, node=None, path=None):
+        "Add `val` to the tree."
         node = node or self.root
         path = path or []
         path.append(node)
-        created=0
+        created = 0
         if val<node.val:
             if node.left:
                 self.add(val, node.left, path)
             else:
                 node.left = Node(val, node)
-                created=1
+                created = 1
 
         elif val>node.val:
             if node.right:
                 self.add(val, node.right, path)
             else:
                 node.right = Node(val, node)
-                created=1
+                created = 1
 
         if created:
-            path.reverse()
-            print("added", val)
-            print("len(path)", len(path), path)
+            self.rebalance(path)
 
-            for i,n in enumerate(path):
-                n.recalc_height()
-                next = getitem(path, i+1)
-                if n.balance >= 2:
-                    if n.right.balance >= 1:
-                        print("left rotation")
-                        self.rot_left(n, next)
-                    elif n.right.balance <= -1:
-                        print("double right rotation")
-                        self.rot_right(n.right, n)
-                        self.rot_left(n, next)
+    def rebalance(self, path):
+        # print("path", path)
+        path.reverse()
+        for i,n in enumerate(path):
+            n.recalc_height()
+            next = getitem(path, i+1)
+            if n.balance >= 2:
+                if n.right.balance >= 0:
+                    self.rot_left(n, next)
+                elif n.right.balance <= -1:
+                    self.rot_right(n.right, n)
+                    self.rot_left(n, next)
 
-                elif n.balance <= -2:
-                    if n.left.balance <= -1:
-                        print("right rotation")
-                        self.rot_right(n, next)
-                    elif n.left.balance <= -1:
-                        print("double left rotation")
-                        self.rot_left(n.left, n)
-                        self.rot_right(n, next)
-                # n.height = max(n.height, i+2)
+            elif n.balance <= -2:
+                if n.left.balance <= 0:
+                    self.rot_right(n, next)
+                elif n.left.balance <= -1:
+                    self.rot_left(n.left, n)
+                    self.rot_right(n, next)
 
     def rot_right(self, node, parent=None):
         if node==self.root:
             self.root = node.left
         left = node.left
-        # print("node", node)
-        # print("left", left)
         node.left.right, node.left = node, node.left.right
         node.recalc_height()
         left.recalc_height()
@@ -167,10 +158,9 @@ class Tree:
             parent.left = left
 
     def rot_left(self, node, parent=None):
-        # print(repr_tree(root))
         if node==self.root:
             self.root = node.right
-        right=node.right
+        right = node.right
         node.right.left, node.right = node, node.right.left
         node.recalc_height()
         right.recalc_height()
@@ -179,18 +169,6 @@ class Tree:
         elif parent and parent.left==node:
             parent.left = right
 
-
-nodes = []
-def Xprint_tree(node, indent=0):
-    """Print tree recursively, doesn't work well in some corner cases but looks clear enough."""
-    nodes.append(node)
-    print(' '*indent + str(node))
-    if node.left:
-        print_tree(node.left, indent+4)
-    if node.right:
-        print_tree(node.right, indent+4)
-
-x=0
 
 def test():
     # root = Node(randint(0,100))
@@ -220,15 +198,23 @@ def test():
     # print("nodes", nodes)
 
 # test()
-tree = Tree(10)
+# lst = list(n_rand(5))
+lst = 42,17,50,45,95
+tree = Tree(lst[0])
 def test2():
-    lst= list(n_rand(5))
-    for n in lst:
-    # for n in (28,31,35,61): #,62,95):
+    # for n in lst[1:]:
+    for n in (17,50,45,95): #,62,95):
         tree.add(n)
-    print("DELETING %s"%lst[0])
+    to_del=17
+    print("DELETING %s"%to_del)
     print(tree.display())
+    # for x in lst:
+        # print('removing', x)
+        # tree.remove(x)
+    print("tree.root", tree.root)
+    print('-'*79)
+    tree.remove(to_del)
     print()
-    print("del %s: "%lst[0], tree.find(lst[0], delete=True))
+    # print("del %s: "%lst[0], tree.find(lst[0], delete=True))
     print(tree.display())
 test2()
