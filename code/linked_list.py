@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
+from time import sleep
 
 class LinkedList:
     def __init__(self):
-        self.last = None
+        self.first = self.last = None
 
     def add(self, val):
         node = [val, None]
@@ -22,4 +23,21 @@ class LinkedList:
 l=LinkedList()
 for x in range(10):
     l.add(x)
+print("list(l)", list(l))
+
+def reverse_list(ll):
+    last = None
+    cur = ll.first
+    while cur:
+        next = cur[1]
+        if last:
+            cur[1] = last
+        last = cur
+        cur = next
+        print("cur", repr(cur))
+        sleep(0.1)
+    ll.first[1] = None
+    ll.first = last
+
+reverse_list(l)
 print("list(l)", list(l))
