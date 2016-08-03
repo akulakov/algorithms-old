@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import operator
+from lib import *
 p = print
 
 def append(a, b):
@@ -27,8 +28,10 @@ def lispmap(func, lists):
     # page 146, lisp style map!
     return (func(x) for x in zip(*lists))
 
+# DOES NOT WORK..
 def square_list(items):
     def iter(things, answer):
+        print("things", things)
         if not things:
             return answer
         else:
@@ -37,9 +40,8 @@ def square_list(items):
             return iter(cdr(things), c)
     return iter(items, None)
 
-print(square_list([3,5,8,9,10]))
+# print(square_list([3,5,8,9,10]))
 
 # print(last([1,3,5,8]))
-
 # p(lisplist(range(10)))
 # print(append(lisplist([1,2,3]), lisplist([11,12,15])))

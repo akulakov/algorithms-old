@@ -20,6 +20,7 @@ class LinkedList:
             item = item[1]
         yield item[0]
 
+
 l=LinkedList()
 for x in range(10):
     l.add(x)
@@ -27,16 +28,15 @@ print("list(l)", list(l))
 
 def reverse_list(ll):
     last = None
-    cur = ll.first
+    cur = orig_first = ll.first
     while cur:
         next = cur[1]
         if last:
             cur[1] = last
         last = cur
         cur = next
-        print("cur", repr(cur))
         sleep(0.1)
-    ll.first[1] = None
+    orig_first[1] = None
     ll.first = last
 
 reverse_list(l)

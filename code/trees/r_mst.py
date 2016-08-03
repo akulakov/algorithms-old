@@ -3,7 +3,7 @@
 """Random minimum spanning tree."""
 
 from implementation import *
-from random import shuffle, randint
+from random import shuffle, randint, choice
 
 import heapq
 
@@ -63,7 +63,9 @@ class SquareGrid:
 
     def neighbors(self, id):
         (x, y) = id
-        results = [(x+2, y), (x, y-2), (x-2, y), (x, y+2)]
+        c = choice
+        offset1, offset2 = c((2,4)), c((2,4))
+        results = [(x+offset1, y), (x, y-offset2), (x-2, y), (x, y+2)]
         results = filter(self.in_bounds, results)
         results = list(filter(self.passable, results))
         for loc in results:
